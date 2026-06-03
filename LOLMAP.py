@@ -14,6 +14,7 @@ import platform
 import dns.resolver
 import dns.rdatatype
 from concurrent.futures import ThreadPoolExecutor
+from scapy.all import Ether, ARP, srp1
 
 os.system("cls" if os.name == "nt" else "clear")
 
@@ -80,7 +81,24 @@ def resolver_dominio(dominio):
         sys.audit("[!] RESOLUCAO DE DOMINIOS FALHOU", dominio)
         print(f"Erro: {e}")
         return None
+
+def arping(ip_alvo):
+    pacote = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=ip_alvo)
     
+    resposta = srp1(pacote, timeout=2, verbose=0)
+    
+    if resposta is None:
+        print(f"O IP: {ip_alvo} não respondeu (timeout ou offline).")
+    
+    if ARP in resposta and resposta[ARP].op == 2:
+        mac = resposta[ARP].hwsrc
+        ip = resposta[ARP].psrc
+        print(f"O IP: {ip} está no MAC: {mac}")
+        print(f"Resumo:", resposta.summary())
+        return mac
+    else:
+        print("Recebeu um pacote, mas não é uma resposta ARP esperada.")
+
 def detectar_os(ip):
     try:
         ping = subprocess.run(["ping", "-c", "1", "-W", "1", ip],
@@ -92,11 +110,14 @@ def detectar_os(ip):
                     return f"Linux/Unix (TTL={ttl_valor})"
                 elif ttl_valor <= 128:
                     return f"Windows (TTL={ttl_valor})"
+                elif ttl_valor <= 255:
+                    print(f"Roteadores/Dispositivos de Rede (TTL={ttl_valor})")
                 else:
                     return f"Cisco/Network (TTL={ttl_valor})"
     except Exception:
         pass
     return "Desconhecido"
+
 
 portas_abertas = []
 lock_lista = __import__('threading').Lock()
@@ -132,6 +153,15 @@ if __name__ == "__main__":
             print("Nao foi possivel resolver. Encerrando.")
             sys.exit()
 
+    escolha = input("Quer resolver MAC? (S/N): ")
+    if escolha.upper() == "N".upper():
+        pass
+    elif escolha .upper() == "S".upper():
+        ip_alvo = input("resolva o MAC do IP: ")
+        mac = arping(ip_alvo)
+    else:
+        mac = "Não consultado!"
+
     OS = detectar_os(ip)
     print(f"OS detectado: {OS}")
 
@@ -150,6 +180,7 @@ if __name__ == "__main__":
     print(f"\n=== RESULTADO ===")
     print(f"Alvo: {alvo} ({ip}) | OS: {OS}")
     print(f"Portas abertas: {len(portas_abertas)}")
+    print(f"MAC: {mac}")
     for porta, servico in sorted(portas_abertas):
         print(f"  {porta} - {servico}")
     print(f"Tempo: {end_time - start_time:.2f}s")
