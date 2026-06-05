@@ -169,7 +169,7 @@ if __name__ == "__main__":
     port_final = int(input("Porta final: "))
     threads = int(input("Threads: "))
 
-    print(f"\n=== ESCANEANDO {ip} PORTAS {port_inicial}-{port_final} ===\n")
+    print(f"\n### [ESCANEANDO] {ip} [PORTAS] {port_inicial}-{port_final} ###\n")
     start_time = time.perf_counter()
 
     with ThreadPoolExecutor(max_workers=threads) as executor:
@@ -177,7 +177,7 @@ if __name__ == "__main__":
             executor.submit(scan_port, ip, port)
 
     end_time = time.perf_counter()
-    print(f"\n=== RESULTADO ===")
+    print(f"\n### [RESULTADO] ###")
     print(f"Alvo: {alvo} ({ip}) | OS: {OS}")
     print(f"Portas abertas: {len(portas_abertas)}")
     print(f"MAC: {mac}")
