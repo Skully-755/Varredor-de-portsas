@@ -40,13 +40,13 @@ print()
 time.sleep(0.4)
 
 def auditoria(event, args):
-    if event == "[+] RESOLUCAO DE DOMINIOS":
+    if event == "### [RESOLUCAO DE DOMINIOS] ###":
         print(f"Auditoria: O dominio \"{args[0]}\" foi resolvido para o IP \"{args[1]}\".")
-    elif event == "[!] RESOLUCAO DE DOMINIOS FALHOU":
+    elif event == "RESOLUCAO DE DOMINIOS FALHOU":
         print(f"Auditoria: A resolucao do dominio \"{args[0]}\" falhou.")
-    if event == "[+] IP VALIDO":
+    if event == "IP VALIDO":
         print(f"Auditoria: O IP \"{args[0]}\" foi validado com sucesso.")
-    elif event == "[!] IP INVALIDO":
+    elif event == "IP INVALIDO":
         print(f"Auditoria: O IP \"{args[0]}\" e invalido.")
     elif event == "":
         print("Auditoria: Evento desconhecido.")
@@ -56,29 +56,29 @@ sys.addaudithook(auditoria)
 def validador(ip):
     try:
         ipaddress.ip_address(ip)
-        sys.audit("[+] IP VALIDO", ip)
+        sys.audit("### [IP VALIDO] ###", ip)
         return True
     except ValueError:
-        sys.audit("[!] IP INVALIDO", ip)
+        sys.audit("### [IP INVALIDO] ###", ip)
         return False
 
 def resolver_dominio(dominio):
     try:
         resultado = dns.resolver.resolve(dominio, dns.rdatatype.A)
         ip = str(resultado[0])
-        sys.audit("[+] RESOLUCAO DE DOMINIOS", dominio, ip)
+        sys.audit("### [RESOLUCAO DE DOMINIOS] ###", dominio, ip)
         print(f"Dominio resolvido: {dominio} -> {ip}")
         return ip
     except dns.resolver.NXDOMAIN:
-        sys.audit("[!] RESOLUCAO DE DOMINIOS FALHOU", dominio)
+        sys.audit("### [RESOLUCAO DE DOMINIOS FALHOU] ###", dominio)
         print("O dominio nao existe!")
         return None
     except dns.resolver.NoAnswer:
-        sys.audit("[!] RESOLUCAO DE DOMINIOS FALHOU", dominio)
+        sys.audit("### [RESOLUCAO DE DOMINIOS FALHOU] ###", dominio)
         print("O dominio nao possui registro A!")
         return None
     except Exception as e:
-        sys.audit("[!] RESOLUCAO DE DOMINIOS FALHOU", dominio)
+        sys.audit("### [RESOLUCAO DE DOMINIOS FALHOU] ###", dominio)
         print(f"Erro: {e}")
         return None
 
@@ -136,7 +136,7 @@ def scan_port(ip, port):
                 servico = socket.getservbyport(port)
             except OSError:
                 servico = "desconhecido"
-            print(f"[+] Porta {port} aberta - {servico}")
+            print(f"Porta {port} aberta - {servico}")
             with lock_lista:
                 portas_abertas.append((port, servico))
 
