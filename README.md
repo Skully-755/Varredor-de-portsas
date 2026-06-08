@@ -9,9 +9,12 @@ LOLMAP é uma ferramenta de segurança cibernética desenvolvida inteiramente em
 3. Instale as dependências: `pip install -r requirements.txt`
 4. Execute: `python3 LOLMAP.py`
 
-## Aviso Legal
+## Licença
 
-Esta ferramenta foi desenvolvida exclusivamente para fins educacionais e de pesquisa em segurança cibernética, com o objetivo de auxiliar profissionais e estudantes a compreenderem técnicas de varredura de rede.
+Este projeto está licenciado sob a Licença MIT. Você tem permissão para utilizar, copiar, modificar, distribuir e sublicenciar este software, desde que o aviso de direitos autorais e a licença original sejam mantidos.
 
-O autor não se responsabiliza pelo uso indevido desta ferramenta. É estritamente proibido utilizá-la contra sistemas sem a autorização prévia e por escrito do proprietário. O usuário é o único responsável por quaisquer consequências legais decorrentes do uso indevido.
+Este software é fornecido "como está", sem qualquer garantia expressa ou implícita. Os autores não se responsabilizam por quaisquer danos, prejuízos ou consequências decorrentes do uso deste software.
 
+O uso desta ferramenta deve estar em conformidade com as leis e regulamentações aplicáveis. O autor não se responsabiliza por usos indevidos, ilegais ou não autorizados realizados por terceiros.
+
+Consulte o arquivo `LICENSE` para o texto completo da Licença MIT.
