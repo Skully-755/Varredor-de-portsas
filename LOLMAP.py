@@ -39,20 +39,6 @@ print("Arquitetura:", platform.architecture()[0])
 print()
 time.sleep(0.4)
 
-def auditoria(event, args):
-    if event == "### [RESOLUCAO DE DOMINIOS] ###":
-        print(f"Auditoria: O dominio \"{args[0]}\" foi resolvido para o IP \"{args[1]}\".")
-    elif event == "RESOLUCAO DE DOMINIOS FALHOU":
-        print(f"Auditoria: A resolucao do dominio \"{args[0]}\" falhou.")
-    if event == "IP VALIDO":
-        print(f"Auditoria: O IP \"{args[0]}\" foi validado com sucesso.")
-    elif event == "IP INVALIDO":
-        print(f"Auditoria: O IP \"{args[0]}\" e invalido.")
-    elif event == "":
-        print("Auditoria: Evento desconhecido.")
-
-sys.addaudithook(auditoria)
-
 def validador(ip):
     try:
         ipaddress.ip_address(ip)
@@ -85,14 +71,12 @@ def resolver_dominio(dominio):
 def arping(ip_alvo):
     pacote = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=ip_alvo)
     
-    resposta = srp1(pacote, timeout=2, verbose=0)
+    resposta = srp1(pacote, timeout=2, verbose=1)
     
     if resposta is None:
         print(f"O IP: {ip_alvo} não respondeu (timeout ou offline).")
     
-    if ARP in resposta and resposta[ARP].op == 2:
-        mac = resposta[ARP].hwsrc
-        ip = resposta[ARP].psrc
+    if resposta:
         print(f"O IP: {ip} está no MAC: {mac}")
         print(f"Resumo:", resposta.summary())
         return mac
@@ -157,7 +141,7 @@ if __name__ == "__main__":
     if escolha.upper() == "N".upper():
         pass
     elif escolha .upper() == "S".upper():
-        ip_alvo = input("resolva o MAC do IP: ")
+        ip_alvo = ip
         mac = arping(ip_alvo)
     else:
         mac = "Não consultado!"
@@ -180,7 +164,6 @@ if __name__ == "__main__":
     print(f"\n### [RESULTADO] ###")
     print(f"Alvo: {alvo} ({ip}) | OS: {OS}")
     print(f"Portas abertas: {len(portas_abertas)}")
-    print(f"MAC: {mac}")
     for porta, servico in sorted(portas_abertas):
         print(f"  {porta} - {servico}")
     print(f"Tempo: {end_time - start_time:.2f}s")
